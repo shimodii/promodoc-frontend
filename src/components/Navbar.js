@@ -10,7 +10,6 @@ function Navbar() {
       <Link to="/dashboard/news">News</Link> |{' '}
       <Link to="/dashboard/inbox">Inbox</Link> |{' '}
       <Link to="/dashboard/upload">Upload</Link> |{' '}
-      <Link to="/dashboard/tickets">Tickets</Link> |{' '}
       <button onClick={logout}>Logout</button>
     </nav>
   )
