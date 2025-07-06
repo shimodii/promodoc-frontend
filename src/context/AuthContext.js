@@ -11,10 +11,10 @@ export function AuthProvider({ children }) {
     // Mock auth logic
     if (username === 'admin' && password === 'admin') {
       setUser({ username, role: 'admin' })
-      navigate('/dashboard/news')
+      navigate('/dashboard/inbox')
     } else if (username === 'client' && password === 'client') {
       setUser({ username, role: 'client' })
-      navigate('/dashboard/news')
+      navigate('/dashboard/inbox')
     } else {
       alert('Invalid credentials')
     }
