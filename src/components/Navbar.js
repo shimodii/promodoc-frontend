@@ -7,7 +7,6 @@ function Navbar() {
   return (
     <nav style={{ background: '#ddd', padding: 10 }}>
       <span>Welcome, {user?.username} | </span>
-      <Link to="/dashboard/news">News</Link> |{' '}
       <Link to="/dashboard/inbox">Inbox</Link> |{' '}
       <Link to="/dashboard/upload">Upload</Link> |{' '}
       <button onClick={logout}>Logout</button>
