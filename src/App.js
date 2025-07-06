@@ -1,3 +1,5 @@
+import { Routes, Route } from 'react-router-dom';
+
 import './App.css';
 import LoginPage from './pages/LoginPage';
 import DashboardLayout from './pages/DashboardLayout';
@@ -11,11 +13,9 @@ function App() {
   <Routes>
     <Route path="/" element={<LoginPage />} />
     <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
-      <Route path="news" element={<NewsPage />} />
       <Route path="inbox" element={<InboxPage />} />
       <Route path="upload" element={<UploadPage />} />
     </Route>
-    <Route path="*" element={<Navigate to="/" />} />
   </Routes>
   );
 }
