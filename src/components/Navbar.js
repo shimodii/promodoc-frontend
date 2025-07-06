@@ -9,6 +9,13 @@ function Navbar() {
       <span>Welcome, {user?.username} | </span>
       <Link to="/dashboard/inbox">Inbox</Link> |{' '}
       <Link to="/dashboard/upload">Upload</Link> |{' '}
+
+      {user?.role === 'admin' && (
+        <>
+          <Link to="/dashboard/management">Management</Link> |{' '}
+        </>
+      )}
+
       <button onClick={logout}>Logout</button>
     </nav>
   )
