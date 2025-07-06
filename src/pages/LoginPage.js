@@ -15,7 +15,9 @@ function LoginPage() {
     <div style={{ padding: 50 }}>
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
+        <p>Username</p>
         <input placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
+        <p>Password</p>
         <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} />
         <button type="submit">Login</button>
       </form>
