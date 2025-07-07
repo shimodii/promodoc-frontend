@@ -16,6 +16,12 @@ function Navbar() {
         </>
       )}
 
+      {user?.role === 'reviewer' && (
+        <>
+          <Link to="/dashboard/validation">Validation</Link> |{' '}
+        </>
+      )}
+
       <button onClick={logout}>Logout</button>
     </nav>
   )
