@@ -15,6 +15,9 @@ export function AuthProvider({ children }) {
     } else if (username === 'client' && password === 'client') {
       setUser({ username, role: 'client' })
       navigate('/dashboard/inbox')
+    } else if (username === 'reviewer' && password === 'reviewer'){
+      setUser({ username, role: 'reviewer' })
+      navigate('/dashboard/inbox')
     } else {
       alert('Invalid credentials')
     }
