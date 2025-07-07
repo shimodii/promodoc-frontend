@@ -6,9 +6,11 @@ import DashboardLayout from './pages/DashboardLayout';
 import UploadPage from './pages/UploadPage';
 import InboxPage from './pages/InboxPage';
 import ManagementPage from './pages/ManagementPage';
+import ValidatorManagementPage from './pages/ValidatorManagementPage';
 
 import ProtectedRoute from './routes/ProtectedRoute'
 import AdminRoute from './routes/AdminRoute';
+import ReviewerRoute from './routes/ReviewerRoute';
 
 function App() {
   return (
@@ -19,6 +21,9 @@ function App() {
       <Route path="upload" element={<UploadPage />} />
       <Route path="management" element={
         <AdminRoute><ManagementPage /></AdminRoute>
+      } />
+      <Route path="validation" element={
+        <ReviewerRoute><ValidatorManagementPage/></ReviewerRoute>
       } />
     </Route>
   </Routes>
