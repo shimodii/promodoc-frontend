@@ -4,12 +4,24 @@ import { useAuth } from '../context/AuthContext'
 import MessageCard from '../components/MessageCard'
 
 function InboxPage() {
-  const { user } = useAuth()
+  // const { user } = useAuth()
+  const { getUserId, getRole } = useAuth()
+  // const { getUserId, getRole } = useAuth()
+
+  const userId = getUserId()
+  const role = getRole()
   const [messages, setMessages] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [title, setTitle] = useState('')
   const [desc, setDesc] = useState('')
+
+  const { getUser } = useAuth()
+  const user = getUser()
+  console.log(user.id, user.email, user.role)
+
+  // const { getUser } = useAuth();
+  // const user = getUser();
 
   useEffect(() => {
     fetchInbox()

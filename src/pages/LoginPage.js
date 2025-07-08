@@ -1,175 +1,157 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import { useAuth } from '../context/AuthContext' // update if your auth context is in another path
+// src/pages/LoginPage.jsx
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function LoginPage() {
-  const navigate = useNavigate()
-  const { login } = useAuth()
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  })
-
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError('')
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
 
     try {
       const response = await axios.post(
-        'http://127.0.0.1:5000/api/login',
+        'http://localhost:5000/api/login',
         formData,
         {
-          headers: { 'Content-Type': 'application/json' }
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      )
+      );
 
-      // You can adjust this based on what your backend returns
-      const { token, user } = response.data
-      login(token, user)
-      navigate('/dashboard/news')
+      const { token } = response.data;
+      if (!token) throw new Error('No token received from server');
+
+      login(token); // Save token in context
+      navigate('/dashboard'); // Go to dashboard
 
     } catch (err) {
-      if (err.response) {
-        setError(err.response.data.message || `Server error: ${err.response.status}`)
+      console.error('Login error:', err);
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
       } else if (err.request) {
-        setError('Network error - Is the backend running?')
+        setError('No response from server. Check your backend.');
       } else {
-        setError('Unexpected error occurred')
+        setError('Something went wrong.');
       }
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div style={styles.container}>
       <form onSubmit={handleSubmit} style={styles.form}>
         <h2 style={styles.title}>Login</h2>
 
-        {error && (
-          <div style={styles.errorMessage}>
-            Error: {error}
-          </div>
-        )}
+        {error && <div style={styles.error}>{error}</div>}
 
         <div style={styles.inputGroup}>
-          <label style={styles.label}>Email</label>
+          <label>Email</label>
           <input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            style={styles.input}
             required
+            style={styles.input}
           />
         </div>
 
         <div style={styles.inputGroup}>
-          <label style={styles.label}>Password</label>
+          <label>Password</label>
           <input
             type="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
-            style={styles.input}
             required
+            style={styles.input}
           />
         </div>
 
-        <button 
-          type="submit" 
-          style={styles.button}
-          disabled={isLoading}
-        >
+        <button type="submit" style={styles.button} disabled={isLoading}>
           {isLoading ? 'Logging in...' : 'Login'}
         </button>
 
-        <div style={styles.loginLink}>
-          Don’t have an account? <Link to="/register" style={styles.link}>Register here</Link>
-        </div>
+        <p style={styles.linkText}>
+          Don't have an account? <Link to="/register" style={styles.link}>Register here</Link>
+        </p>
       </form>
     </div>
-  )
+  );
 }
 
-// Same styles as RegisterPage
 const styles = {
   container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
     minHeight: '100vh',
-    backgroundColor: '#f5f5f5'
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: '#f0f2f5'
   },
   form: {
     width: '350px',
+    background: '#fff',
     padding: '30px',
-    backgroundColor: 'white',
-    borderRadius: '8px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+    borderRadius: '10px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
   },
   title: {
-    marginBottom: '20px',
     textAlign: 'center',
-    color: '#333'
-  },
-  inputGroup: {
     marginBottom: '20px'
   },
-  label: {
-    display: 'block',
-    marginBottom: '8px',
-    fontWeight: '500',
-    color: '#555'
+  inputGroup: {
+    marginBottom: '15px'
   },
   input: {
     width: '100%',
     padding: '10px',
-    border: '1px solid #ddd',
+    fontSize: '14px',
     borderRadius: '4px',
-    fontSize: '16px',
-    boxSizing: 'border-box'
+    border: '1px solid #ccc'
   },
   button: {
     width: '100%',
-    padding: '12px',
+    padding: '10px',
     backgroundColor: '#4a90e2',
     color: 'white',
+    fontWeight: 'bold',
     border: 'none',
     borderRadius: '4px',
-    fontSize: '16px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s'
+    cursor: 'pointer'
   },
-  errorMessage: {
-    padding: '10px',
-    backgroundColor: '#ffebee',
-    color: '#d32f2f',
-    borderRadius: '4px',
-    marginBottom: '20px',
-    fontSize: '14px'
-  },
-  loginLink: {
+  linkText: {
+    marginTop: '15px',
     textAlign: 'center',
-    fontSize: '14px',
-    color: '#555'
+    fontSize: '14px'
   },
   link: {
     color: '#4a90e2',
     textDecoration: 'none',
-    fontWeight: '500'
+    fontWeight: 'bold'
+  },
+  error: {
+    backgroundColor: '#ffe6e6',
+    color: '#c00',
+    padding: '10px',
+    borderRadius: '5px',
+    marginBottom: '15px',
+    fontSize: '14px'
   }
-}
+};
 
-export default LoginPage
+export default LoginPage;
