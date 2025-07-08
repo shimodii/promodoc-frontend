@@ -3,7 +3,9 @@ import { useAuth } from '../../context/AuthContext'
 import axios from 'axios'
 
 function UserActivation() {
-  const { user } = useAuth()
+  // const { user } = useAuth()
+  const { getUser } = useAuth()
+  const user = getUser();
   const [users, setUsers] = useState([])
 
   useEffect(() => {

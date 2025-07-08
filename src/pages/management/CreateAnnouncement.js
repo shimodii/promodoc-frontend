@@ -3,7 +3,9 @@ import { useAuth } from '../../context/AuthContext'
 import axios from 'axios'
 
 function CreateAnnouncement() {
-  const { user } = useAuth()
+  // const { user } = useAuth()
+  const { getUser } = useAuth()
+  const user = getUser();
   const [title, setTitle] = useState('')
   const [desc, setDesc] = useState('')
   const [status, setStatus] = useState(null)

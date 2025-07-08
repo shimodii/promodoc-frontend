@@ -3,7 +3,9 @@ import { useAuth } from '../../context/AuthContext'
 import axios from 'axios'
 
 function DocumentValidation() {
-  const { user } = useAuth()
+  // const { user } = useAuth()
+  const { getUser } = useAuth()
+  const user = getUser();
   const [documents, setDocuments] = useState([])
 
   useEffect(() => {
