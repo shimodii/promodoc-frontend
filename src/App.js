@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 
 import './App.css';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import DashboardLayout from './pages/DashboardLayout';
 import UploadPage from './pages/UploadPage';
 import InboxPage from './pages/InboxPage';
@@ -16,6 +17,8 @@ function App() {
   return (
   <Routes>
     <Route path="/" element={<LoginPage />} />
+    <Route path="/login" element={<LoginPage />} />
+    <Route path="/register" element={<RegisterPage />} />
     <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
       <Route path="inbox" element={<InboxPage />} />
       <Route path="upload" element={<UploadPage />} />
