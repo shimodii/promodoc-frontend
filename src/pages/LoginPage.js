@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { Link } from 'react-router-dom'
 
 
 function LoginPage() {
@@ -22,6 +23,7 @@ function LoginPage() {
         <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} /><br />
         <button type="submit" style={{ margin: 50 }}>Login</button>
       </form>
+      <p>Don't have an account? <Link to="/register">Register here</Link></p>
     </div>
   )
 }
