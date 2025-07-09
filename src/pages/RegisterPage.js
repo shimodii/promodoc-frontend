@@ -128,7 +128,7 @@ function RegisterPage() {
         </button>
         
         <div style={styles.loginLink}>
-          حساب کاربری دارید ? <Link to="/login" style={styles.link}>ازینجا وارد شوید</Link>
+          حساب کاربری دارید ؟ <Link to="/login" style={styles.link}>ازینجا وارد شوید</Link>
         </div>
       </form>
     </div>
