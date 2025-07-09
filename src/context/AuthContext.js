@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
     if (!token) return null;
     try {
       const decoded = jwtDecode(token);
-      return decoded.id || null;
+      return decoded.user_id || null;
     } catch {
       return null;
     }
