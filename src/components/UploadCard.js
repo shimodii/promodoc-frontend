@@ -53,7 +53,7 @@ function UploadCard({ index, data, onChange, onUploaded, onRemove }) {
   return (
     <div style={styles.card}>
       <div style={styles.inputGroup}>
-        <label style={styles.label}>Document Title</label>
+        <label style={styles.label}>تیتر مستند</label>
         <input
           type="text"
           name="title"
@@ -65,7 +65,7 @@ function UploadCard({ index, data, onChange, onUploaded, onRemove }) {
       </div>
 
       <div style={styles.inputGroup}>
-        <label style={styles.label}>Document Type</label>
+        <label style={styles.label}>نوع مستند</label>
         <select
           name="type"
           value={data.type}
@@ -73,15 +73,15 @@ function UploadCard({ index, data, onChange, onUploaded, onRemove }) {
           style={styles.select}
           required
         >
-          <option value="">Select type</option>
-          <option value="research">Research</option>
-          <option value="educational">Education</option>
-          <option value="executive">Executive</option>
+          <option value="">نوع مستند را انتخاب کنید</option>
+          <option value="research">تحقیقاتی</option>
+          <option value="educational">آموزشی</option>
+          <option value="executive">اجرایی</option>
         </select>
       </div>
 
       <div style={styles.inputGroup}>
-        <label style={styles.label}>PDF File</label>
+        <label style={styles.label}>فایل پی دی اف</label>
         <input
           type="file"
           name="file"
@@ -98,7 +98,7 @@ function UploadCard({ index, data, onChange, onUploaded, onRemove }) {
           onClick={handleUpload}
           disabled={isUploading}
         >
-          {isUploading ? 'Uploading...' : 'Upload'}
+          {isUploading ? 'در حال بارگذاری' : 'بارگذاری'}
         </button>
 
         <button
@@ -106,7 +106,7 @@ function UploadCard({ index, data, onChange, onUploaded, onRemove }) {
           onClick={() => onRemove(index)}
           disabled={isUploading}
         >
-          Remove
+          پاک کردن
         </button>
       </div>
 
