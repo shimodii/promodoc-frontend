@@ -1,129 +1,171 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
 
-const UploadCard = ({ index }) => {
-  const { token } = useAuth();
-  const [title, setTitle] = useState('');
-  const [docType, setDocType] = useState('Research');
-  const [file, setFile] = useState(null);
-  const [status, setStatus] = useState('');
+function UploadCard({ index, data, onChange, onUploaded, onRemove }) {
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (name === 'file') {
+      onChange(index, name, files[0]);
+    } else {
+      onChange(index, name, value);
+    }
+  };
 
   const handleUpload = async () => {
-    if (!title || !file) {
-      setStatus('❌ Please fill in all fields and select a file.');
+    if (!data.title || !data.type || !data.file) {
+      setUploadStatus('Please fill all fields before uploading');
       return;
     }
 
     const formData = new FormData();
-    formData.append('title', title);
-    formData.append('type', docType);
-    formData.append('document', file);
+    formData.append('title', data.title);
+    formData.append('type', data.type);
+    formData.append('file', data.file);
+
+    setIsUploading(true);
+    setUploadStatus('');
 
     try {
-      const res = await axios.post('http://localhost:5000/api/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`
+      const res = await axios.post(
+        'http://localhost:5000/api/protected/client/documents/upload',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
         }
-      });
+      );
 
-      if (res.status === 200) {
-        setStatus('✅ Uploaded successfully!');
-        setTitle('');
-        setFile(null);
-      } else {
-        setStatus('❌ Upload failed.');
-      }
+      setUploadStatus('✅ Upload successful!');
+      onUploaded?.(index, res.data.document);
     } catch (err) {
-      setStatus('❌ Error: ' + (err.response?.data?.message || err.message));
+      console.error(err);
+      setUploadStatus('❌ Upload failed');
+    } finally {
+      setIsUploading(false);
     }
   };
 
   return (
     <div style={styles.card}>
-      <h3>Upload Document #{index + 1}</h3>
-
       <div style={styles.inputGroup}>
         <label style={styles.label}>Document Title</label>
         <input
           type="text"
-          placeholder="Enter title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          name="title"
+          value={data.title}
+          onChange={handleChange}
           style={styles.input}
+          required
         />
       </div>
 
       <div style={styles.inputGroup}>
         <label style={styles.label}>Document Type</label>
-        <select value={docType} onChange={(e) => setDocType(e.target.value)} style={styles.input}>
-          <option value="Research">Research</option>
-          <option value="Education">Education</option>
-          <option value="Executive">Executive</option>
+        <select
+          name="type"
+          value={data.type}
+          onChange={handleChange}
+          style={styles.select}
+          required
+        >
+          <option value="">Select type</option>
+          <option value="research">Research</option>
+          <option value="educational">Education</option>
+          <option value="executive">Executive</option>
         </select>
       </div>
 
       <div style={styles.inputGroup}>
-        <label style={styles.label}>Upload File</label>
+        <label style={styles.label}>PDF File</label>
         <input
           type="file"
-          onChange={(e) => setFile(e.target.files[0])}
+          name="file"
+          accept="application/pdf"
+          onChange={handleChange}
           style={styles.input}
+          required
         />
       </div>
 
-      <button style={styles.button} onClick={handleUpload}>
-        Upload
-      </button>
+      <div style={styles.buttonRow}>
+        <button
+          style={{ ...styles.button, backgroundColor: '#4caf50' }}
+          onClick={handleUpload}
+          disabled={isUploading}
+        >
+          {isUploading ? 'Uploading...' : 'Upload'}
+        </button>
 
-      {status && <p style={styles.status}>{status}</p>}
+        <button
+          style={{ ...styles.button, backgroundColor: '#f44336' }}
+          onClick={() => onRemove(index)}
+          disabled={isUploading}
+        >
+          Remove
+        </button>
+      </div>
+
+      {uploadStatus && <div style={styles.status}>{uploadStatus}</div>}
     </div>
   );
-};
+}
 
 const styles = {
   card: {
     border: '1px solid #ddd',
-    borderRadius: '10px',
     padding: '20px',
-    marginBottom: '20px',
+    borderRadius: '10px',
+    backgroundColor: '#fff',
     boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
-    background: '#fff',
-    maxWidth: '500px'
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+    marginBottom: '20px',
   },
   inputGroup: {
-    marginBottom: '15px',
-    boxSizing: 'border-box'
+    display: 'flex',
+    flexDirection: 'column',
   },
   label: {
-    display: 'block',
     marginBottom: '6px',
-    fontWeight: 'bold',
-    fontSize: '14px',
-    color: '#444'
+    fontWeight: '500',
+    color: '#333',
   },
   input: {
-    width: '100%',
     padding: '10px',
-    fontSize: '14px',
-    borderRadius: '5px',
     border: '1px solid #ccc',
-    boxSizing: 'border-box'
+    borderRadius: '4px',
+    fontSize: '14px',
+  },
+  select: {
+    padding: '10px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    fontSize: '14px',
+    backgroundColor: '#fff',
+  },
+  buttonRow: {
+    display: 'flex',
+    gap: '10px',
+    justifyContent: 'flex-end',
   },
   button: {
-    backgroundColor: '#4a90e2',
-    color: '#fff',
+    padding: '10px 16px',
+    color: 'white',
+    fontWeight: 'bold',
     border: 'none',
-    padding: '10px 20px',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    marginTop: '10px'
+    borderRadius: '4px',
+    cursor: 'pointer'
   },
   status: {
-    marginTop: '12px',
     fontSize: '14px',
-    color: '#555'
+    color: '#555',
+    marginTop: '8px'
   }
 };
 
