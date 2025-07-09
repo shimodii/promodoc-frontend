@@ -73,13 +73,13 @@ function InboxPage() {
 
   return (
     <div>
-      <h2>Inbox</h2>
+      <h2>صندوق اخبار</h2>
 
       {/* Admin Add Button */}
       {user.role === 'admin' && (
         <>
           <button onClick={() => setShowForm(prev => !prev)} style={{ marginBottom: 10 }}>
-            {showForm ? 'Cancel' : '➕ New Announcement'}
+            {showForm ? 'لغو' : '➕ اعلامیه جدید'}
           </button>
 
           {showForm && (
@@ -88,21 +88,21 @@ function InboxPage() {
             }}>
               <input
                 type="text"
-                placeholder="Title"
+                placeholder="تیتر"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
                 style={{ width: '100%', marginBottom: 10 }}
               />
               <textarea
-                placeholder="Description"
+                placeholder="توضیحات"
                 value={desc}
                 onChange={(e) => setDesc(e.target.value)}
                 required
                 rows={4}
                 style={{ width: '100%', marginBottom: 10 }}
               />
-              <button type="submit">Submit</button>
+              <button type="submit">تایید</button>
             </form>
           )}
         </>
@@ -110,9 +110,9 @@ function InboxPage() {
 
       {/* Message List */}
       {loading ? (
-        <p>Loading inbox...</p>
+        <p>درحال بارگیری اعلامیه ها ...</p>
       ) : messages.length === 0 ? (
-        <p>No messages found.</p>
+        <p>اعلامیه ای یافت نشد</p>
       ) : (
         messages.map(msg => (
           <MessageCard
