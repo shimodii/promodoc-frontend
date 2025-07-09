@@ -1,157 +1,175 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
-import UploadCardComponent from '../components/UploadCard';
+import UploadCard from '../components/UploadCard';
 import DocumentCard from '../components/DocumentCard';
+import { useAuth } from '../context/AuthContext';
 
-const UploadCard = ({ index, token }) => {
-  const [title, setTitle] = useState('');
-  const [docType, setDocType] = useState('Research');
-  const [file, setFile] = useState(null);
-  const [status, setStatus] = useState('');
+function UploadPage() {
+  const { token, user } = useAuth();
+  const [uploadCards, setUploadCards] = useState([
+    { title: '', type: '', file: null }
+  ]);
+  const [userDocuments, setUserDocuments] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+
+  const handleAddCard = () => {
+    setUploadCards(prev => [...prev, { title: '', type: '', file: null }]);
+  };
+
+  const handleCardChange = (index, field, value) => {
+    const updated = [...uploadCards];
+    updated[index][field] = value;
+    setUploadCards(updated);
+  };
 
   const handleUpload = async () => {
-    if (!title || !file) {
-      setStatus('❌ Please fill in all fields and select a file.');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('type', docType);
-    formData.append('document', file);
+    setIsSubmitting(true);
+    setUploadError('');
 
     try {
-      const res = await axios.post('http://localhost:5000/api/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`
-        }
-      });
+      for (const card of uploadCards) {
+        const formData = new FormData();
+        formData.append('title', card.title);
+        formData.append('type', card.type.toLowerCase());
+        formData.append('file', card.file);
 
-      if (res.status === 200) {
-        setStatus('✅ Uploaded successfully!');
-        setTitle('');
-        setFile(null);
-      } else {
-        setStatus('❌ Upload failed.');
+        const res = await axios.post('http://localhost:5000/api/protected/client/documents/upload', formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+
+        console.log('✅ Upload successful:', res.data);
       }
+
+      fetchUserDocuments(); // Refresh doc list
+      setUploadCards([{ title: '', type: '', file: null }]); // Reset
     } catch (err) {
-      setStatus('❌ Error: ' + (err.response?.data?.message || err.message));
+      console.error('❌ Upload error:', err);
+      setUploadError('Upload failed. Please check fields and file type.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  return (
-    <div style={styles.card}>
-      <h3>Upload Document #{index + 1}</h3>
 
-      <input
-        type="text"
-        placeholder="Document Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        style={styles.input}
-      />
-
-      <select value={docType} onChange={(e) => setDocType(e.target.value)} style={styles.select}>
-        <option value="Research">Research</option>
-        <option value="Education">Education</option>
-        <option value="Executive">Executive</option>
-      </select>
-
-      <input type="file" onChange={(e) => setFile(e.target.files[0])} style={styles.input} />
-
-      <button style={styles.button} onClick={handleUpload}>
-        Upload
-      </button>
-
-      {status && <p style={styles.status}>{status}</p>}
-    </div>
-  );
-};
-
-const UploadPage = () => {
-  const { token } = useAuth();
-  const [uploadCards, setUploadCards] = useState([0]); // just tracking indexes
-
-  const addUploadCard = () => {
-    setUploadCards((prev) => [...prev, prev.length]);
+  const fetchUserDocuments = async () => {
+    if (!user?.id) return;
+    try {
+      const res = await axios.get(`http://localhost:5000/api/docs/${user.id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setUserDocuments(res.data || []);
+    } catch (err) {
+      console.error('❌ Error fetching docs:', err);
+    }
   };
+
+  useEffect(() => {
+    fetchUserDocuments();
+  }, [user?.id]);
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.pageTitle}>Document Upload</h2>
+      <h2 style={styles.header}>Upload Your Documents</h2>
 
-      {uploadCards.map((cardIndex) => (
-        <UploadCardComponent key={cardIndex} index={cardIndex} token={token} />
-      ))}
-
-      <button onClick={addUploadCard} style={styles.addButton}>
-        ➕ Add Upload Box
+      <button onClick={handleAddCard} style={styles.addButton}>
+        + Add Upload Box
       </button>
+
+      <div style={styles.uploadSection}>
+        {uploadCards.map((card, idx) => (
+          <UploadCard
+            key={idx}
+            index={idx}
+            data={card}
+            onChange={handleCardChange}
+            // onRemove={handleRemoveCard}
+          />
+        ))}
+      </div>
+
+      {uploadError && <div style={styles.error}>{uploadError}</div>}
+
+      <button onClick={handleUpload} style={styles.uploadBtn} disabled={isSubmitting}>
+        {isSubmitting ? 'Uploading...' : 'Upload All'}
+      </button>
+
+      <h3 style={styles.sectionTitle}>Previously Uploaded</h3>
+      {userDocuments.length === 0 ? (
+        <p style={styles.noDocs}>No documents yet.</p>
+      ) : (
+        <div style={styles.documentList}>
+          {userDocuments.map((doc, idx) => (
+            <DocumentCard
+              key={idx}
+              title={doc.title}
+              type={doc.type}
+              downloadUrl={`http://localhost:5000/${doc.filePath}`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
-};
+}
 
-// Styles
 const styles = {
   container: {
-    maxWidth: '700px',
-    margin: '0 auto',
-    padding: '40px 20px'
-  },
-  pageTitle: {
-    textAlign: 'center',
-    marginBottom: '30px'
-  },
-  card: {
-    border: '1px solid #ddd',
-    borderRadius: '10px',
     padding: '20px',
-    marginBottom: '20px',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
-    background: '#fff'
+    maxWidth: '800px',
+    margin: '0 auto'
   },
-  input: {
-    display: 'block',
-    width: '100%',
-    padding: '10px',
-    marginBottom: '10px',
-    fontSize: '14px',
-    borderRadius: '5px',
-    border: '1px solid #ccc'
-  },
-  select: {
-    width: '100%',
-    padding: '10px',
-    marginBottom: '10px',
-    fontSize: '14px',
-    borderRadius: '5px',
-    border: '1px solid #ccc'
-  },
-  button: {
-    backgroundColor: '#4a90e2',
-    color: '#fff',
-    border: 'none',
-    padding: '10px 20px',
-    borderRadius: '5px',
-    cursor: 'pointer'
+  header: {
+    fontSize: '24px',
+    marginBottom: '16px'
   },
   addButton: {
-    display: 'block',
-    margin: '20px auto 0',
-    padding: '10px 20px',
-    backgroundColor: '#2ecc71',
+    background: '#4a90e2',
     color: '#fff',
+    padding: '10px',
     border: 'none',
     borderRadius: '6px',
-    fontWeight: 'bold',
+    marginBottom: '24px',
     cursor: 'pointer'
   },
-  status: {
-    marginTop: '10px',
-    fontSize: '14px',
-    color: '#555'
+  uploadSection: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px'
+  },
+  uploadBtn: {
+    background: '#28a745',
+    color: '#fff',
+    padding: '12px',
+    fontSize: '16px',
+    border: 'none',
+    borderRadius: '6px',
+    marginTop: '16px',
+    cursor: 'pointer'
+  },
+  sectionTitle: {
+    fontSize: '20px',
+    marginTop: '40px',
+    marginBottom: '12px'
+  },
+  noDocs: {
+    fontStyle: 'italic',
+    color: '#666'
+  },
+  documentList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px'
+  },
+  error: {
+    color: 'red',
+    background: '#ffe6e6',
+    padding: '10px',
+    borderRadius: '6px',
+    marginTop: '10px'
   }
 };
 
