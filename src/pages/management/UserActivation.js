@@ -1,89 +1,112 @@
-import { useEffect, useState } from 'react'
-import { useAuth } from '../../context/AuthContext'
-import axios from 'axios'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
+import UserCard from '../../components/UserCard';
 
 function UserActivation() {
-  // const { user } = useAuth()
-  const { getUser } = useAuth()
-  const user = getUser();
-  const [users, setUsers] = useState([])
+  const { token } = useAuth(); // 🔐 Grab the token
+  const [users, setUsers] = useState([]);
+  const [loadingId, setLoadingId] = useState(null);
+  const [error, setError] = useState('');
+
+  const fetchUsers = async () => {
+    try {
+      const res = await axios.get('http://localhost:5000/api/protected/admin/users', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(res.data)
+      setUsers(res.data);
+    } catch (err) {
+      console.error('❌ Error fetching users: ', err);
+      setError('Failed to fetch users.');
+    }
+  };
 
   useEffect(() => {
-    axios.get('http://your-backend.com/api/users', {
-      headers: { Authorization: `Bearer ${user.token}` }
-    }).then(res => setUsers(res.data))
-      .catch(err => console.error(err))
-  }, [user])
+    fetchUsers();
+  }, []);
 
   const handleActivate = async (userId) => {
     try {
-      await axios.post(`http://your-backend.com/api/users/activate`, {
-        userId
-      }, {
-        headers: { Authorization: `Bearer ${user.token}` }
-      })
-      setUsers(prev =>
-        prev.map(u =>
-          u.id === userId ? { ...u, isActive: true } : u
-        )
-      )
+      setLoadingId(userId);
+      await axios.post(`http://localhost:5000/api/protected/admin/approve/${userId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(userId)
+      fetchUsers();
     } catch (err) {
-      console.error('Activation failed:', err)
+      console.error('❌ Activation error:', err);
+      setError('Could not activate user.');
+    } finally {
+      setLoadingId(null);
     }
-  }
+  };
 
   const handleDelete = async (userId) => {
     try {
-      await axios.delete(`http://your-backend.com/api/users/${userId}`, {
-        headers: { Authorization: `Bearer ${user.token}` }
-      })
-      setUsers(prev => prev.filter(u => u.id !== userId))
+      setLoadingId(userId);
+      await axios.patch(`http://localhost:5000/api/protected/admin/delete/${userId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(userId)
+      console.log("hellllllo")
+      fetchUsers();
     } catch (err) {
-      console.error('Deletion failed:', err)
+      console.error('❌ Deletion error:', err);
+      setError('Could not delete user.');
+    } finally {
+      setLoadingId(null);
     }
-  }
+  };
 
   return (
-    <div>
-      <h3>User Management</h3>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr style={{ borderBottom: '1px solid #ccc' }}>
-            <th>Username</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map(u => (
-            <tr key={u.id} style={{ borderBottom: '1px solid #eee' }}>
-              <td>{u.username}</td>
-              <td>{u.role}</td>
-              <td>{u.isActive ? 'Active' : 'Deactivated'}</td>
-              <td>
-                {u.isActive ? (
-                  <button
-                    onClick={() => handleDelete(u.id)}
-                    style={{ background: '#ff4444', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: '5px' }}
-                  >
-                    Delete
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleActivate(u.id)}
-                    style={{ background: '#44aa44', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: '5px' }}
-                  >
-                    Activate
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div style={styles.container}>
+      <h2 style={styles.title}>User Management</h2>
+
+      {error && <div style={styles.error}>{error}</div>}
+
+      {users.length === 0 ? (
+        <p>No users found.</p>
+      ) : (
+        users.map((user) => (
+          <UserCard
+            id={user.ID}
+            full_name={user.full_name}
+            email={user.email}
+            is_active={user.is_active}
+            onActivate={() => handleActivate(user.ID)}
+            onDelete={() => handleDelete(user.ID)}
+            loading={loadingId === user.ID}
+          />
+        ))
+      )}
     </div>
-  )
+  );
 }
 
-export default UserActivation
+const styles = {
+  container: {
+    padding: '20px',
+    maxWidth: '800px',
+    margin: '0 auto',
+  },
+  title: {
+    fontSize: '24px',
+    marginBottom: '20px',
+  },
+  error: {
+    backgroundColor: '#ffe0e0',
+    color: '#d00',
+    padding: '10px',
+    borderRadius: '5px',
+    marginBottom: '20px',
+  },
+};
+
+export default UserActivation;
