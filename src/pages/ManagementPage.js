@@ -5,9 +5,9 @@ import UserActivation from './management/UserActivation'
 import CreateAnnouncement from './management/CreateAnnouncement'
 
 const tabs = [
-  { id: 'documents', label: 'Validate Documents' },
-  { id: 'users', label: 'Manage Users' },
-  { id: 'announcement', label: 'Create Announcement' }
+  { id: 'documents', label: 'اعتبار سنجی مدارک' },
+  { id: 'users', label: 'مدیریت کاربران' },
+  { id: 'announcement', label: 'ایجاد اعلامیه جدید' }
 ]
 
 function ManagementPage() {
@@ -15,7 +15,7 @@ function ManagementPage() {
 
   return (
     <div>
-      <h2>Management Panel</h2>
+      <h2>صفحه مدیریتی</h2>
 
       {/* Local navigation */}
       <div style={{ marginBottom: 20 }}>
