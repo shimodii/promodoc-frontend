@@ -45,9 +45,9 @@ function DocumentValidation() {
 
   return (
     <div>
-      <h3>Pending Document Submissions</h3>
+      <h3>مدارک در دست بررسی</h3>
       {documents.length === 0 ? (
-        <p>No documents to review.</p>
+        <p>مدرکی برای بررسی وجود ندارد</p>
       ) : (
         <ul>
           {documents.map(doc => (
@@ -65,7 +65,7 @@ function DocumentValidation() {
                 onClick={() => handleReject(doc.id)}
                 style={{ marginRight: 10, backgroundColor: '#ff5555', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: '5px' }}
               >
-                Reject
+                رد کردن مدرک
               </button>
 
               {/* Point Assignment */}
