@@ -1,4 +1,3 @@
-// src/pages/LoginPage.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
@@ -108,7 +107,8 @@ const styles = {
     background: '#fff',
     padding: '30px',
     borderRadius: '10px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+    boxSizing: 'border-box'
   },
   title: {
     textAlign: 'center',
@@ -122,7 +122,8 @@ const styles = {
     padding: '10px',
     fontSize: '14px',
     borderRadius: '4px',
-    border: '1px solid #ccc'
+    border: '1px solid #ccc',
+    boxSizing: 'border-box'
   },
   button: {
     width: '100%',
@@ -132,7 +133,8 @@ const styles = {
     fontWeight: 'bold',
     border: 'none',
     borderRadius: '4px',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    boxSizing: 'border-box'
   },
   linkText: {
     marginTop: '15px',
