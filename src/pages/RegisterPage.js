@@ -62,22 +62,22 @@ function RegisterPage() {
   return (
     <div style={styles.container}>
       <form onSubmit={handleSubmit} style={styles.form}>
-        <h2 style={styles.title}>Create Account</h2>
+        <h2 style={styles.title}>ایجاد حساب کاربری</h2>
         
         {success && (
           <div style={styles.successMessage}>
-            Registration successful! <Link to="/login" style={styles.link}>Login here</Link>
+            ثبت نام با موفقیت انجام شد ! <Link to="/login" style={styles.link}> ورود </Link>
           </div>
         )}
         
         {error && (
           <div style={styles.errorMessage}>
-            Error: {error}
+            اخطار: {error}
           </div>
         )}
         
         <div style={styles.inputGroup}>
-          <label style={styles.label}>Full Name</label>
+          <label style={styles.label}>نام کامل</label>
           <input
             type="text"
             name="fullName"
@@ -89,7 +89,7 @@ function RegisterPage() {
         </div>
         
         <div style={styles.inputGroup}>
-          <label style={styles.label}>Email</label>
+          <label style={styles.label}>پست الکترونیکی</label>
           <input
             type="email"
             name="email"
@@ -101,7 +101,7 @@ function RegisterPage() {
         </div>
         
         <div style={styles.inputGroup}>
-          <label style={styles.label}>Password</label>
+          <label style={styles.label}>رمز عبور</label>
           <input
             type="password"
             name="password"
@@ -120,15 +120,15 @@ function RegisterPage() {
         >
           {isLoading ? (
             <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ marginRight: '8px' }}>Processing...</span>
+              <span style={{ marginRight: '8px' }}>درحال پردازش...</span>
               {/* Optional spinner */}
               <span className="spinner"></span>
             </span>
-          ) : 'Register'}
+          ) : 'ثبت نام'}
         </button>
         
         <div style={styles.loginLink}>
-          Already have an account? <Link to="/login" style={styles.link}>Login here</Link>
+          حساب کاربری دارید ? <Link to="/login" style={styles.link}>ازینجا وارد شوید</Link>
         </div>
       </form>
     </div>
