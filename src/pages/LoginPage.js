@@ -54,12 +54,12 @@ function LoginPage() {
   return (
     <div style={styles.container}>
       <form onSubmit={handleSubmit} style={styles.form}>
-        <h2 style={styles.title}>Login</h2>
+        <h2 style={styles.title}>ورود</h2>
 
         {error && <div style={styles.error}>{error}</div>}
 
         <div style={styles.inputGroup}>
-          <label>Email</label>
+          <label>پست الکترونیکی</label>
           <input
             type="email"
             name="email"
@@ -71,7 +71,7 @@ function LoginPage() {
         </div>
 
         <div style={styles.inputGroup}>
-          <label>Password</label>
+          <label>رمز عبور</label>
           <input
             type="password"
             name="password"
@@ -83,11 +83,11 @@ function LoginPage() {
         </div>
 
         <button type="submit" style={styles.button} disabled={isLoading}>
-          {isLoading ? 'Logging in...' : 'Login'}
+          {isLoading ? 'درحال ورود ...' : 'ورود'}
         </button>
 
         <p style={styles.linkText}>
-          Don't have an account? <Link to="/register" style={styles.link}>Register here</Link>
+          حساب کاربری ندارید ؟ <Link to="/register" style={styles.link}> ازینجا ثبت نام کنید </Link>
         </p>
       </form>
     </div>
