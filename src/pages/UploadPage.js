@@ -73,10 +73,10 @@ function UploadPage() {
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.header}>Upload Your Documents</h2>
+      <h2 style={styles.header}>بارگذاری مدارک و مستندات</h2>
 
       <button onClick={handleAddCard} style={styles.addButton}>
-        + Add Upload Box
+        + اضافه کردن بخش بارگذاری جدید
       </button>
 
       <div style={styles.uploadSection}>
@@ -97,9 +97,9 @@ function UploadPage() {
         {isSubmitting ? 'Uploading...' : 'Upload All'}
       </button>
 
-      <h3 style={styles.sectionTitle}>Previously Uploaded</h3>
+      <h3 style={styles.sectionTitle}>بارگذاری های پیشین</h3>
       {userDocuments.length === 0 ? (
-        <p style={styles.noDocs}>No documents yet.</p>
+        <p style={styles.noDocs}>مدرکی بارگذاری نشده است</p>
       ) : (
         <div style={styles.documentList}>
           {userDocuments.map((doc, idx) => (
