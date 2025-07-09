@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import UploadCardComponent from '../components/UploadCard';
+import DocumentCard from '../components/DocumentCard';
 
 const UploadCard = ({ index, token }) => {
   const [title, setTitle] = useState('');
